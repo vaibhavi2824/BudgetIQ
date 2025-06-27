@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block header_actions %}
+<div class="btn-group">
+    <a href="/add-expense" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus me-1"></i> Add Expense
+    </a>
+    <a href="/add-budget" class="btn btn-outline-primary btn-sm">
+        <i class="fas fa-chart-pie me-1"></i> Add Budget
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card border-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-2 text-muted">Total Expenses</h6>
+                        <h3 class="card-title">₹{{ "%.2f"|format(total) }}</h3>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded">
+                        <i class="fas fa-money-bill-wave text-primary fs-4"></i>
+                    </div>
+                </div>
+                <a href="/view-expenses" class="card-link small">View all expenses</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card border-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-2 text-muted">Categories</h6>
+                        <h3 class="card-title">{{ summary|length }}</h3>
+                    </div>
+                    <div class="bg-success bg-opacity-10 p-3 rounded">
+                        <i class="fas fa-tags text-success fs-4"></i>
+                    </div>
+                </div>
+                <a href="/reports" class="card-link small">View reports</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card border-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-2 text-muted">Latest Budget</h6>
+                        <h3 class="card-title">
+                            {% if budget %}
+                                ₹{{ "%.2f"|format(budget[0].Budget) }}
+                            {% else %}
+                                ₹0.00
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="bg-info bg-opacity-10 p-3 rounded">
+                        <i class="fas fa-chart-pie text-info fs-4"></i>
+                    </div>
+                </div>
+                <a href="/view-budget" class="card-link small">View budgets</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card border-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-2 text-muted">Recent Expenses</h6>
+                        <h3 class="card-title">{{ expenses|length }}</h3>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 p-3 rounded">
+                        <i class="fas fa-receipt text-warning fs-4"></i>
+                    </div>
+                </div>
+                <a href="/add-expense" class="card-link small">Add new</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% if spending_chart %}
+    <div class="col-lg-8 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Monthly Spending</h5>
+            </div>
+            <div class="card-body">
+                {{ spending_chart|safe }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Top Categories</h5>
+            </div>
+            <div class="card-body">
+                {% if summary %}
+                <ul class="list-group list-group-flush">
+                    {% for category, amount in summary.items() %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <div>
+                            <span class="badge bg-primary me-2">{{ loop.index }}</span>
+                            {{ category }}
+                        </div>
+                        <span class="fw-bold">₹{{ "%.2f"|format(amount) }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-chart-pie fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No expense data available</p>
+                    <a href="/add-expense" class="btn btn-sm btn-primary">Add Expense</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Recent Expenses</h5>
+                <a href="/view-expenses" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if expenses %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for expense in expenses %}
+                            <tr>
+                                <td>{{ expense.Date }}</td>
+                                <td>{{ expense.Category }}</td>
+                                <td class="fw-bold">₹{{ "%.2f"|format(expense.Amount) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No recent expenses</p>
+                    <a href="/add-expense" class="btn btn-sm btn-primary">Add Expense</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Budget Summary</h5>
+                <a href="/view-budget" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if budget %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Month</th>
+                                <th>Category</th>
+                                <th>Budget</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in budget %}
+                            <tr>
+                                <td>{{ entry.Month }}</td>
+                                <td>{{ entry.Category }}</td>
+                                <td class="fw-bold">₹{{ "%.2f"|format(entry.Budget) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-chart-pie fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No budget entries</p>
+                    <a href="/add-budget" class="btn btn-sm btn-primary">Add Budget</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

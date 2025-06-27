@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Edit Budget{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-edit me-2"></i>Edit Budget
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="month" class="form-label">Month</label>
+                            <input type="month" class="form-control" id="month" name="month" 
+                                   value="{{ budget.Month }}" required>
+                            <div class="invalid-feedback">
+                                Please select a month.
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="" disabled>Select category</option>
+                                <option value="Food & Dining" {% if budget.Category == 'Food & Dining' %}selected{% endif %}>Food & Dining</option>
+                                <option value="Transportation" {% if budget.Category == 'Transportation' %}selected{% endif %}>Transportation</option>
+                                <option value="Housing" {% if budget.Category == 'Housing' %}selected{% endif %}>Housing</option>
+                                <option value="Utilities" {% if budget.Category == 'Utilities' %}selected{% endif %}>Utilities</option>
+                                <option value="Entertainment" {% if budget.Category == 'Entertainment' %}selected{% endif %}>Entertainment</option>
+                                <option value="Healthcare" {% if budget.Category == 'Healthcare' %}selected{% endif %}>Healthcare</option>
+                                <option value="Shopping" {% if budget.Category == 'Shopping' %}selected{% endif %}>Shopping</option>
+                                <option value="Education" {% if budget.Category == 'Education' %}selected{% endif %}>Education</option>
+                                <option value="Travel" {% if budget.Category == 'Travel' %}selected{% endif %}>Travel</option>
+                                <option value="Other" {% if budget.Category == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a category.
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="budget" class="form-label">Budget Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" step="0.01" class="form-control" 
+                                       id="budget" name="budget" value="{{ budget.Budget }}" required>
+                            </div>
+                            <div class="invalid-feedback">
+                                Please enter a valid budget amount.
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 mt-4">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="/view-budget" class="btn btn-outline-secondary me-md-2">
+                                    <i class="fas fa-times me-1"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i> Update Budget
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(() => {
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
+{% endblock %}

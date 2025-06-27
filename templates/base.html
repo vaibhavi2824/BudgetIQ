@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BudgetIQ - {% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/theme-switcher.js') }}" defer></script>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if request.endpoint != 'login' and request.endpoint != 'register' %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-wallet me-2"></i>BudgetIQ
+            </a>
+           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" 
+                 aria-label="Toggle navigation" aria-expanded="false" aria-controls="navbarMain">
+                 <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMain">
+               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a>
+         </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/add-expense"><i class="fas fa-plus-circle me-1"></i> Add Expense</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/view-expenses"><i class="fas fa-list me-1"></i> View Expenses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/add-budget"><i class="fas fa-chart-pie me-1"></i> Budget</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports"><i class="fas fa-chart-bar me-1"></i> Reports</a>
+                    </li>
+                    {% if premium_features %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/financial-goals"><i class="fas fa-bullseye me-1"></i> Goals</a>
+                    </li>
+                    {% endif %}
+                    {% if is_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" href="/admin/dashboard"><i class="fas fa-lock me-1"></i> Admin</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <div class="d-flex align-items-center">
+                   
+                    {% if 'user_id' in session %}
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i> {{ session['username'] }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                           
+                            
+                            <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a href="/login" class="btn btn-outline-light me-2">Login</a>
+                    <a href="/register" class="btn btn-light">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+
+    <main class="container mt-5 pt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            {% block header %}
+            <h1 class="h3 mb-0">{% block page_title %}{% endblock %}</h1>
+            {% endblock %}
+            {% block header_actions %}{% endblock %}
+        </div>
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer mt-auto py-3 bg-light border-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <span class="text-muted">&copy; {{ now.strftime('%Y') }} BudgetIQ. All rights reserved.</span>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <span class="text-muted">
+                        <a href="#" class="text-decoration-none me-2">Privacy Policy</a>
+                        <a href="#" class="text-decoration-none">Terms of Service</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

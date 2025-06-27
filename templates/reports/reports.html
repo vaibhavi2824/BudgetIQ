@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Progress bar styles */
+    .report-progress-container {
+        height: 20px;
+    }
+    
+    .report-progress-bar {
+        background-color: #0d6efd;
+        border-radius: 0.25rem;
+    }
+    
+    /* Premium card styles */
+    .premium-feature-card {
+        border: 1px solid #ffc107;
+    }
+    
+    .premium-feature-header {
+        background-color: rgba(255, 193, 7, 0.1);
+    }
+    
+    .premium-feature-title {
+        color: #ffc107;
+    }
+    
+    /* Empty state styles */
+    .empty-state-container {
+        padding: 3rem 0;
+        text-align: center;
+    }
+    
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>Spending Reports
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-4" id="reportsTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="monthly-tab" data-bs-toggle="tab" 
+                                data-bs-target="#monthly" type="button" role="tab">
+                            Monthly Summary
+                        </button>
+                    </li>
+                    {% if premium_features %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="categories-tab" data-bs-toggle="tab" 
+                                data-bs-target="#categories" type="button" role="tab">
+                            Category Distribution
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="trends-tab" data-bs-toggle="tab" 
+                                data-bs-target="#trends" type="button" role="tab">
+                            Spending Trends
+                        </button>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <div class="tab-content" id="reportsTabContent">
+                    <div class="tab-pane fade show active" id="monthly" role="tabpanel">
+                        {% if spending %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Month</th>
+                                        <th>Category</th>
+                                        <th>Amount</th>
+                                        <th>% of Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% set total_spending = spending|sum(attribute='Amount') %}
+                                    {% for row in spending %}
+                                    <tr>
+                                        <td>{{ row.Month }}</td>
+                                        <td>{{ row.Category }}</td>
+                                        <td>₹{{ "%.2f"|format(row.Amount) }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress report-progress-container flex-grow-1 me-2">
+                                                    <div class="progress-bar report-progress-bar" 
+                                                         role="progressbar" 
+                                                         aria-valuenow="{{ (row.Amount / total_spending * 100)|round|int }}" 
+                                                         aria-valuemin="0" 
+                                                         aria-valuemax="100"
+                                                         style="width: {{ (row.Amount / total_spending * 100) }}%">
+                                                        <span class="visually-hidden">{{ (row.Amount / total_spending * 100)|round|int }}%</span>
+                                                    </div>
+                                                </div>
+                                                <span>{{ "%.1f"|format(row.Amount / total_spending * 100) }}%</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="empty-state-container">
+                            <i class="fas fa-chart-pie empty-state-icon"></i>
+                            <p class="text-muted">No spending data available</p>
+                            <a href="/add-expense" class="btn btn-sm btn-primary">Add Expense</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if premium_features %}
+                    <div class="tab-pane fade" id="categories" role="tabpanel">
+                        {% if category_dist %}
+                            {{ category_dist|safe }}
+                        {% else %}
+                            <div class="empty-state-container">
+                                <i class="fas fa-chart-pie empty-state-icon"></i>
+                                <p class="text-muted">No category data available</p>
+                                <a href="/add-expense" class="btn btn-sm btn-primary">Add Expense</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="tab-pane fade" id="trends" role="tabpanel">
+                        {% if spending_trends %}
+                            {{ spending_trends|safe }}
+                        {% else %}
+                            <div class="empty-state-container">
+                                <i class="fas fa-chart-line empty-state-icon"></i>
+                                <p class="text-muted">No trend data available</p>
+                                <a href="/add-expense" class="btn btn-sm btn-primary">Add Expense</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if not premium_features %}
+<div class="row">
+    <div class="col-12">
+        <div class="card premium-feature-card">
+            <div class="card-header premium-feature-header">
+                <h5 class="card-title mb-0 premium-feature-title">
+                    <i class="fas fa-crown me-2"></i>Premium Features Available
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h4>Unlock Advanced Reports and Features</h4>
+                        <p class="mb-0">
+                            Upgrade to Premium for detailed analytics, trend visualizations, 
+                            financial goals tracking, and more powerful budgeting tools.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <button class="btn btn-warning">
+                            <i class="fas fa-crown me-2"></i>Upgrade Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

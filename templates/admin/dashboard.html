@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card border-primary">
+                            <div class="card-body text-center">
+                                <h6 class="card-subtitle mb-2 text-muted">Total Users</h6>
+                                <h2 class="card-title">{{ total_users }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card border-success">
+                            <div class="card-body text-center">
+                                <h6 class="card-subtitle mb-2 text-muted">Total Expenses</h6>
+                                <h2 class="card-title">₹{{ "%.2f"|format(total_expenses) }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card border-info">
+                            <div class="card-body text-center">
+                                <h6 class="card-subtitle mb-2 text-muted">Total Budget</h6>
+                                <h2 class="card-title">₹{{ "%.2f"|format(total_budget) }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="card-title mb-0">System Statistics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Metric</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Active Users</td>
+                                                <td>{{ total_users }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Total Expenses Recorded</td>
+                                                <td>{{ total_expenses|length }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Total Budget Entries</td>
+                                                <td>{{ total_budget|length }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>System Uptime</td>
+                                                <td>24/7</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

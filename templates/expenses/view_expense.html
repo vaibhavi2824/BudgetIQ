@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}View Expenses{% endblock %}
+
+{% block header_actions %}
+<a href="/add-expense" class="btn btn-primary btn-sm">
+    <i class="fas fa-plus me-1"></i> Add Expense
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-list me-2"></i>All Expenses
+        </h5>
+        <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" 
+                    id="filterDropdown" data-bs-toggle="dropdown">
+                <i class="fas fa-filter me-1"></i>Filter
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">Last Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#">All Time</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        {% if expenses %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                    <tr>
+                        <td>{{ expense.Date }}</td>
+                        <td>
+                            <span class="badge bg-primary">{{ expense.Category }}</span>
+                        </td>
+                        <td class="fw-bold">₹{{ "%.2f"|format(expense.Amount) }}</td>
+                        <td>{{ expense.Description }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="/edit-expense/{{ loop.index0 }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="/delete-expense/{{ loop.index0 }}" class="btn btn-outline-danger" 
+                                   onclick="return confirm('Are you sure you want to delete this expense?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No Expenses Recorded</h5>
+            <p class="text-muted">Start by adding your first expense</p>
+            <a href="/add-expense" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Add Expense
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
